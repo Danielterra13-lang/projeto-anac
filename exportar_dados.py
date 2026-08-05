@@ -4,6 +4,17 @@ import io
 from datetime import datetime, timezone
 
 import pandas as pd
+import math
+
+def limpar_nan(obj):
+    if isinstance(obj, float) and math.isnan(obj):
+        return None
+    if isinstance(obj, dict):
+        return {k: limpar_nan(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [limpar_nan(v) for v in obj]
+    return obj
+
 import requests
 from google.cloud import bigquery
 
@@ -68,6 +79,7 @@ def exportar_mercado(client):
 
 
 def salvar_json(dados, caminho):
+    dados = limpar_nan(dados)
     os.makedirs(os.path.dirname(caminho), exist_ok=True)
     with open(caminho, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, default=str)
