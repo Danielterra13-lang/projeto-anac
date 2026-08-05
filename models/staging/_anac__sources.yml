@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: raw_anac
+    database: portfolio-anac
+    schema: raw_anac
+    tables:
+      - name: microdados_bruto
