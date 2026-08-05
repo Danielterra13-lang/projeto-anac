@@ -15,14 +15,14 @@
 
 <style>
   :root {
-    --bg: #0A0D13;
-    --bg-panel: #12161F;
-    --bg-panel-raised: #171C28;
-    --hairline: #262C3A;
-    --amber: #F2A93B;
-    --amber-dim: #7A5A22;
-    --teal: #3FA796;
-    --rust: #C9564F;
+    --bg: #05070A;
+    --bg-panel: #0E1219;
+    --bg-panel-raised: #141925;
+    --hairline: #2A3142;
+    --amber: #FFB300;
+    --amber-dim: #A66A00;
+    --teal: #1FD9BC;
+    --rust: #FF5A5F;
     --text: #E7E9EE;
     --text-muted: #838EA3;
     --text-faint: #4B5468;
@@ -461,6 +461,26 @@
 
     <div class="section-block">
       <div class="section-head">
+        <h2>Passageiros pagos ao longo do tempo</h2>
+      </div>
+      <p class="section-desc">
+        Evolução do total de passageiros pagos, todas as empresas somadas, na visão anual completa ou mês a mês de um ano específico.
+      </p>
+      <div class="controls-row">
+        <div class="toggle-group" id="toggle-visao-passageiros">
+          <button data-visao="ano" class="active">Evolução anual</button>
+          <button data-visao="mes">Evolução mensal</button>
+        </div>
+        <div class="filter-field" id="campo-ano-passageiros" style="display:none;">
+          <label for="ano-passageiros-mes">Ano</label>
+          <select id="ano-passageiros-mes"></select>
+        </div>
+      </div>
+      <div class="chart-wrap tall"><canvas id="chart-passageiros"></canvas></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-head">
         <h2>Participação de mercado por companhia aérea</h2>
       </div>
       <p class="section-desc">
@@ -537,6 +557,9 @@
     visaoRegional: "total",
     agrupamentoRegional: "regiao",
     anoRegionalMes: 2019,
+    visaoPassageiros: "ano",
+    anoPassageirosMes: 2019,
+    chartPassageiros: null,
     filtroAeroporto: "",
     filtroEmpresa: ""
   };
@@ -721,7 +744,7 @@
 
       var linha = L.polyline(
         pontosCurva(r.origem_lat, r.origem_lon, r.destino_lat, r.destino_lon),
-        { color: "#F2A93B", weight: largura, opacity: opacidade, smoothFactor: 1 }
+        { color: "#FFB300", weight: largura, opacity: opacidade, smoothFactor: 1 }
       );
 
       var htmlEmpresas = listaEmpresas.slice(0, 5).map(function (e) {
@@ -733,7 +756,7 @@
         '<span class="route-title">' + r.aeroporto_origem_sigla + ' → ' + r.aeroporto_destino_sigla + '</span>' +
         '<span class="route-stat">' + fmtInt(r.total_passageiros) + ' passageiros em ' + ano + '</span><br>' +
         '<span class="route-stat">load factor ' + fmtPct(r.load_factor) + '</span>' +
-        (htmlEmpresas ? '<hr style="border-color:#262C3A;margin:6px 0">' + htmlEmpresas : '') +
+        (htmlEmpresas ? '<hr style="border-color:#2A3142;margin:6px 0">' + htmlEmpresas : '') +
         '</span>'
       );
 
@@ -749,7 +772,7 @@
     Object.keys(aeroportos).forEach(function (sigla) {
       var a = aeroportos[sigla];
       var marcador = L.circleMarker([a.lat, a.lon], {
-        radius: 3.5, color: "#3FA796", fillColor: "#3FA796", fillOpacity: 0.9, weight: 1
+        radius: 3.5, color: "#1FD9BC", fillColor: "#1FD9BC", fillOpacity: 0.9, weight: 1
       });
       marcador.bindPopup('<span class="route-popup"><span class="route-title">' + sigla + '</span>' +
         '<span class="route-stat">' + (a.nome || "") + '</span></span>');
@@ -860,7 +883,7 @@
 
   // ---------- Gráfico de mercado ----------
 
-  var PALETA = ["#F2A93B", "#3FA796", "#8FB8DE", "#C9564F", "#9C7BD6", "#E0C46C", "#5B8C7B", "#D98E5B", "#5F6B85"];
+  var PALETA = ["#FFB300", "#1FD9BC", "#8FB8DE", "#FF5A5F", "#9C7BD6", "#E0C46C", "#5B8C7B", "#D98E5B", "#5F6B85"];
 
   function topEmpresasGeral(limite) {
     var totais = {};
@@ -929,13 +952,13 @@
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
         scales: {
-          x: { stacked: true, ticks: { color: "#838EA3", font: { family: "IBM Plex Mono", size: 10 }, maxRotation: 0, autoSkip: true }, grid: { color: "#1B212E" } },
-          y: { stacked: true, min: 0, max: 100, ticks: { color: "#838EA3", callback: function (v) { return v + "%"; } }, grid: { color: "#1B212E" } }
+          x: { stacked: true, ticks: { color: "#838EA3", font: { family: "IBM Plex Mono", size: 10 }, maxRotation: 0, autoSkip: true }, grid: { color: "#1E2532" } },
+          y: { stacked: true, min: 0, max: 100, ticks: { color: "#838EA3", callback: function (v) { return v + "%"; } }, grid: { color: "#1E2532" } }
         },
         plugins: {
           legend: { position: "bottom", labels: { color: "#B7BECC", font: { family: "IBM Plex Sans", size: 11 }, boxWidth: 12 } },
           tooltip: {
-            backgroundColor: "#171C28",
+            backgroundColor: "#141925",
             titleFont: { family: "IBM Plex Mono" },
             bodyFont: { family: "IBM Plex Sans" },
             itemSort: function (a, b) { return b.parsed.y - a.parsed.y; },
@@ -1008,7 +1031,7 @@
 
     montarChartRegiao({
       type: "bar",
-      data: { labels: labels, datasets: [{ label: "Passageiros embarcados (total do período)", data: valores, backgroundColor: "#F2A93B", borderRadius: 2, maxBarThickness: 64 }] },
+      data: { labels: labels, datasets: [{ label: "Passageiros embarcados (total do período)", data: valores, backgroundColor: "#FFB300", borderRadius: 2, maxBarThickness: 64 }] },
       escalaX: "categoria"
     });
   }
@@ -1094,7 +1117,7 @@
         plugins: {
           legend: { display: legend, position: "bottom", labels: { color: "#B7BECC", font: { family: "IBM Plex Sans", size: 11 }, boxWidth: 12 } },
           tooltip: {
-            backgroundColor: "#171C28",
+            backgroundColor: "#141925",
             titleFont: { family: "IBM Plex Mono" },
             bodyFont: { family: "IBM Plex Sans" },
             itemSort: function (a, b) { return b.parsed.y - a.parsed.y; },
@@ -1103,7 +1126,7 @@
         },
         scales: {
           x: { ticks: { color: "#B7BECC", font: { family: "IBM Plex Mono", size: 11 } }, grid: { display: false } },
-          y: { ticks: { color: "#838EA3", callback: function (v) { return fmtInt(v); } }, grid: { color: "#1B212E" } }
+          y: { ticks: { color: "#838EA3", callback: function (v) { return fmtInt(v); } }, grid: { color: "#1E2532" } }
         }
       }
     });
@@ -1153,6 +1176,100 @@
     });
   }
 
+  // ---------- Gráfico de passageiros pagos no período ----------
+
+  function agregarPassageirosAnual() {
+    var totais = {};
+    state.mercado.forEach(function (r) {
+      totais[r.ano] = (totais[r.ano] || 0) + (r.total_passageiros_pagos || 0);
+    });
+    return state.anos.map(function (a) { return totais[a] || 0; });
+  }
+
+  function agregarPassageirosMensal(ano) {
+    var totais = {};
+    state.mercado.filter(function (r) { return r.ano === ano; }).forEach(function (r) {
+      totais[r.mes] = (totais[r.mes] || 0) + (r.total_passageiros_pagos || 0);
+    });
+    return MESES_ABREV.map(function (_, idx) { var m = idx + 1; return totais[m] || 0; });
+  }
+
+  function renderChartPassageiros() {
+    var labels, dados;
+    if (state.visaoPassageiros === "mes") {
+      labels = MESES_ABREV;
+      dados = agregarPassageirosMensal(state.anoPassageirosMes);
+    } else {
+      labels = state.anos;
+      dados = agregarPassageirosAnual();
+    }
+
+    var ctx = document.getElementById("chart-passageiros").getContext("2d");
+    if (state.chartPassageiros) state.chartPassageiros.destroy();
+
+    state.chartPassageiros = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Passageiros pagos",
+          data: dados,
+          borderColor: "#FFB300",
+          backgroundColor: "#FFB300",
+          tension: 0.25,
+          fill: false,
+          pointRadius: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#141925",
+            titleFont: { family: "IBM Plex Mono" },
+            bodyFont: { family: "IBM Plex Sans" },
+            callbacks: { label: function (c) { return c.dataset.label + ": " + fmtInt(c.parsed.y); } }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#B7BECC", font: { family: "IBM Plex Mono", size: 11 } }, grid: { display: false } },
+          y: { ticks: { color: "#838EA3", callback: function (v) { return fmtInt(v); } }, grid: { color: "#1E2532" } }
+        }
+      }
+    });
+  }
+
+  function initControlesPassageiros() {
+    var botoesVisao = document.querySelectorAll("#toggle-visao-passageiros button");
+    var campoAno = document.getElementById("campo-ano-passageiros");
+    var selectAno = document.getElementById("ano-passageiros-mes");
+
+    state.anos.forEach(function (a) {
+      var opt = document.createElement("option");
+      opt.value = a; opt.textContent = a;
+      if (a === state.anoPassageirosMes) opt.selected = true;
+      selectAno.appendChild(opt);
+    });
+
+    botoesVisao.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        botoesVisao.forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        state.visaoPassageiros = btn.dataset.visao;
+        campoAno.style.display = btn.dataset.visao === "mes" ? "flex" : "none";
+        renderChartPassageiros();
+      });
+    });
+
+    selectAno.addEventListener("change", function () {
+      state.anoPassageirosMes = parseInt(selectAno.value, 10);
+      renderChartPassageiros();
+    });
+  }
+
   // ---------- Cards de indicadores do Gate 2 ----------
 
   function renderKpisMercado() {
@@ -1193,6 +1310,9 @@
 
     initControlesRegional();
     renderChartRegiao();
+
+    initControlesPassageiros();
+    renderChartPassageiros();
 
     renderKpisMercado();
   }).catch(function (erro) {

@@ -15,16 +15,16 @@ select
     -- origem
     aeroporto_de_origem_sigla as aeroporto_origem_sigla,
     aeroporto_de_origem_nome as aeroporto_origem_nome,
-    aeroporto_de_origem_uf as aeroporto_origem_uf,
-    aeroporto_de_origem_regiao as aeroporto_origem_regiao,
+    nullif(trim(aeroporto_de_origem_uf), '') as aeroporto_origem_uf,
+    nullif(trim(aeroporto_de_origem_regiao), '') as aeroporto_origem_regiao,
     aeroporto_de_origem_pais as aeroporto_origem_pais,
     aeroporto_de_origem_continente as aeroporto_origem_continente,
 
     -- destino
     aeroporto_de_destino_sigla as aeroporto_destino_sigla,
     aeroporto_de_destino_nome as aeroporto_destino_nome,
-    aeroporto_de_destino_uf as aeroporto_destino_uf,
-    aeroporto_de_destino_regiao as aeroporto_destino_regiao,
+    nullif(trim(aeroporto_de_destino_uf), '') as aeroporto_destino_uf,
+    nullif(trim(aeroporto_de_destino_regiao), '') as aeroporto_destino_regiao,
     aeroporto_de_destino_pais as aeroporto_destino_pais,
     aeroporto_de_destino_continente as aeroporto_destino_continente,
 
