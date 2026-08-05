@@ -129,18 +129,9 @@
     transition: color 0.15s ease, border-color 0.15s ease;
   }
 
-  .gate-tab .gate-num {
-    color: var(--text-faint);
-    margin-right: 8px;
-  }
-
+  .gate-tab .gate-num { color: var(--text-faint); margin-right: 8px; }
   .gate-tab:hover { color: var(--text); }
-
-  .gate-tab.active {
-    color: var(--amber);
-    border-bottom-color: var(--amber);
-  }
-
+  .gate-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
   .gate-tab.active .gate-num { color: var(--amber-dim); }
 
   /* ---------- Layout geral ---------- */
@@ -170,11 +161,9 @@
     overflow: hidden;
   }
 
-  .kpi-card {
-    background: var(--bg-panel);
-    padding: 16px 18px;
-    overflow: hidden;
-  }
+  .kpi-strip.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .kpi-card { background: var(--bg-panel); padding: 16px 18px; overflow: hidden; }
 
   .kpi-label {
     font-family: var(--mono);
@@ -193,13 +182,10 @@
     letter-spacing: 0.01em;
   }
 
-  .kpi-value.flip {
-    animation: flap 0.32s ease;
-  }
-
-  .kpi-value .accent { color: var(--amber); }
-  .kpi-value.is-crash .accent { color: var(--rust); }
-  .kpi-value.is-recovery .accent { color: var(--teal); }
+  .kpi-value.flip { animation: flap 0.32s ease; }
+  .kpi-value.is-crash { color: var(--rust); }
+  .kpi-value.is-recovery { color: var(--teal); }
+  .kpi-sub { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
 
   @keyframes flap {
     0%   { transform: translateY(0);    opacity: 1; filter: blur(0); }
@@ -208,7 +194,7 @@
     100% { transform: translateY(0);    opacity: 1; filter: blur(0); }
   }
 
-  /* ---------- Slider de ano (compartilhado entre abas) ---------- */
+  /* ---------- Slider de ano ---------- */
 
   .year-control {
     display: flex;
@@ -217,7 +203,7 @@
     background: var(--bg-panel);
     border: 1px solid var(--hairline);
     padding: 14px 20px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     flex-wrap: wrap;
   }
 
@@ -235,158 +221,134 @@
   }
 
   .year-display.flip { animation: flap 0.32s ease; }
-
   .year-slider-wrap { flex: 1; min-width: 220px; }
-
-  .year-slider-wrap input[type="range"] {
-    width: 100%;
-    accent-color: var(--amber);
-    background: transparent;
-  }
+  .year-slider-wrap input[type="range"] { width: 100%; accent-color: var(--amber); background: transparent; }
 
   .year-ticks {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-faint);
-    margin-top: 2px;
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px; color: var(--text-faint); margin-top: 2px;
   }
 
-  .year-note {
-    font-size: 12px;
-    color: var(--text-muted);
-    max-width: 200px;
-  }
-
+  .year-note { font-size: 12px; color: var(--text-muted); max-width: 220px; }
   .year-note strong { color: var(--rust); }
+
+  /* ---------- Filtros do mapa ---------- */
+
+  .filter-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    border-top: none;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+  }
+
+  .filter-field { display: flex; align-items: center; gap: 8px; }
+
+  .filter-field label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  select {
+    background: var(--bg-panel-raised);
+    color: var(--text);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    padding: 6px 10px;
+    font-family: var(--sans);
+    font-size: 13px;
+    min-width: 190px;
+  }
+  select:hover { border-color: var(--amber-dim); }
+
+  .filter-clear {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  .filter-clear:hover { color: var(--amber); border-color: var(--amber-dim); }
+
+  .filter-active-note {
+    font-size: 12px;
+    color: var(--teal);
+    font-family: var(--mono);
+  }
 
   /* ---------- Mapa ---------- */
 
-  #map {
-    height: 560px;
-    border: 1px solid var(--hairline);
-    background: var(--bg-panel);
-  }
+  #map { height: 560px; border: 1px solid var(--hairline); background: var(--bg-panel); cursor: default; }
 
-  .leaflet-popup-content-wrapper {
-    background: var(--bg-panel-raised);
-    color: var(--text);
-    border-radius: 4px;
-    font-family: var(--sans);
-  }
+  .leaflet-popup-content-wrapper { background: var(--bg-panel-raised); color: var(--text); border-radius: 4px; font-family: var(--sans); }
   .leaflet-popup-tip { background: var(--bg-panel-raised); }
-  .route-popup .route-title {
-    font-family: var(--mono);
-    color: var(--amber);
-    font-size: 13px;
-    margin-bottom: 4px;
-    display: block;
-  }
+  .route-popup .route-title { font-family: var(--mono); color: var(--amber); font-size: 13px; margin-bottom: 4px; display: block; }
   .route-popup .route-stat { font-size: 12px; color: var(--text-muted); }
+  .route-popup .empresa-linha { font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 10px; margin-top: 2px; }
+  .route-popup .empresa-linha b { color: var(--text); }
 
   .map-legend {
-    display: flex;
-    gap: 22px;
-    align-items: center;
-    padding: 10px 4px 0;
-    font-size: 12px;
-    color: var(--text-muted);
-    flex-wrap: wrap;
+    display: flex; gap: 22px; align-items: center; flex-wrap: wrap;
+    padding: 10px 4px 0; font-size: 12px; color: var(--text-muted);
   }
-  .map-legend .swatch {
-    display: inline-block;
-    width: 18px;
-    height: 3px;
-    background: var(--amber);
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-  .map-legend .dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--teal);
-    margin-right: 6px;
-    vertical-align: middle;
-  }
+  .map-legend .swatch { display: inline-block; width: 18px; height: 3px; background: var(--amber); margin-right: 6px; vertical-align: middle; }
+  .map-legend .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--teal); margin-right: 6px; vertical-align: middle; }
+  .map-legend .note { font-family: var(--mono); font-size: 11px; color: var(--text-faint); width: 100%; margin-top: 6px; }
 
-  /* ---------- Aba de mercado ---------- */
+  /* ---------- Blocos genéricos ---------- */
 
-  .section-block {
-    background: var(--bg-panel);
-    border: 1px solid var(--hairline);
-    padding: 20px;
-    margin-bottom: 22px;
-  }
+  .section-block { background: var(--bg-panel); border: 1px solid var(--hairline); padding: 20px; margin-bottom: 22px; }
 
   .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 4px;
-    flex-wrap: wrap;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    margin-bottom: 4px; flex-wrap: wrap;
   }
 
   .section-head h2 {
-    font-family: var(--mono);
-    font-size: 14px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text);
-    margin: 0;
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--text); margin: 0;
   }
 
-  .section-desc {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    margin: 4px 0 16px;
-    max-width: 640px;
-    line-height: 1.5;
-  }
+  .section-desc { font-size: 12.5px; color: var(--text-muted); margin: 4px 0 16px; max-width: 640px; line-height: 1.5; }
 
-  .toggle-group {
-    display: inline-flex;
-    border: 1px solid var(--hairline);
-    border-radius: 3px;
-    overflow: hidden;
-  }
+  .controls-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
 
+  .toggle-group { display: inline-flex; border: 1px solid var(--hairline); border-radius: 3px; overflow: hidden; }
   .toggle-group button {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    background: var(--bg-panel-raised);
-    color: var(--text-muted);
-    border: none;
-    padding: 7px 14px;
-    cursor: pointer;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+    background: var(--bg-panel-raised); color: var(--text-muted); border: none; padding: 7px 14px; cursor: pointer;
   }
-
   .toggle-group button + button { border-left: 1px solid var(--hairline); }
   .toggle-group button.active { background: var(--amber-dim); color: var(--bg); }
 
   .chart-wrap { height: 340px; position: relative; }
   .chart-wrap.short { height: 300px; }
+  .chart-wrap.tall { height: 400px; }
 
   footer {
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 20px 28px 40px;
-    font-size: 12px;
-    color: var(--text-faint);
-    font-family: var(--mono);
+    max-width: 1320px; margin: 0 auto; padding: 20px 28px 40px;
+    font-size: 12px; color: var(--text-faint); font-family: var(--mono);
     border-top: 1px solid var(--hairline);
   }
 
   @media (max-width: 760px) {
-    .kpi-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .kpi-strip, .kpi-strip.cols-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
     .board-header { flex-direction: column; align-items: flex-start; }
     .board-meta { text-align: left; }
     #map { height: 420px; }
+    select { min-width: 140px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -420,7 +382,7 @@
     <p class="panel-intro">
       As 150 rotas com mais passageiros pagos em cada ano, com origem e destino de cada etapa de voo.
       Mova o controle abaixo para ver a malha se expandir entre 2000 e 2019, colapsar em 2020 e se
-      recuperar nos anos seguintes.
+      recuperar nos anos seguintes. Use os filtros para isolar um aeroporto ou uma companhia aérea.
     </p>
 
     <div class="kpi-strip" id="kpi-strip">
@@ -448,48 +410,101 @@
         <div class="year-ticks"><span>2000</span><span>2010</span><span>2020</span><span>2026</span></div>
       </div>
       <div class="year-display" id="year-display">2019</div>
-      <div class="year-note">Em 2020 a malha perdeu mais da metade do volume de passageiros. <strong>Em 2026 os dados cobrem só até o mês mais recente disponível.</strong></div>
+      <div class="year-note">Em 2020 a malha perdeu mais da metade do volume de passageiros. <strong>2026 cobre só até o mês mais recente disponível.</strong></div>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-field">
+        <label for="filtro-aeroporto">Aeroporto</label>
+        <select id="filtro-aeroporto"><option value="">Todos</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="filtro-empresa">Companhia</label>
+        <select id="filtro-empresa"><option value="">Todas</option></select>
+      </div>
+      <button class="filter-clear" id="filtro-limpar">Limpar filtros</button>
+      <span class="filter-active-note" id="filtro-nota"></span>
     </div>
 
     <div id="map"></div>
     <div class="map-legend">
       <span><span class="swatch"></span>rota (espessura = volume de passageiros)</span>
-      <span><span class="dot"></span>aeroporto ativo no ano selecionado</span>
+      <span><span class="dot"></span>aeroporto ativo no ano/filtro selecionado</span>
+      <span class="note">Por questão de desempenho, o mapa mostra apenas as 150 rotas com mais passageiros de cada ano — o suficiente para acompanhar a evolução da malha sem carregar 26 anos de dados linha a linha.</span>
     </div>
   </section>
 
   <!-- ===================== ABA 2: MERCADO E REGIÕES ===================== -->
   <section id="tab-mercado" class="tab-panel">
     <p class="panel-intro">
-      Concentração de mercado entre companhias aéreas ao longo de toda a série, e o volume de passageiros
-      embarcados por região do Brasil no ano selecionado no controle acima.
+      Concentração de mercado entre companhias aéreas e volume de passageiros por região/estado do Brasil,
+      na série completa 2000–2026.
     </p>
 
-    <div class="section-block">
-      <div class="section-head">
-        <h2>Participação de mercado por companhia aérea</h2>
-        <div class="toggle-group" id="toggle-granularidade">
-          <button data-modo="ano" class="active">Por ano</button>
-          <button data-modo="mes">Por mês</button>
-        </div>
+    <div class="kpi-strip cols-3" id="kpi-strip-mercado">
+      <div class="kpi-card">
+        <div class="kpi-label">Líder em decolagens (2000–2026)</div>
+        <div class="kpi-value" id="kpi-lider-decolagens">—</div>
+        <div class="kpi-sub" id="kpi-lider-decolagens-sub"></div>
       </div>
-      <p class="section-desc">
-        Participação percentual de passageiros pagos por empresa, série completa 2000–2026. As oito maiores
-        empresas do período aparecem individualmente; o restante é agrupado em "Outras".
-      </p>
-      <div class="chart-wrap"><canvas id="chart-mercado"></canvas></div>
+      <div class="kpi-card">
+        <div class="kpi-label">Decolagens internacionais</div>
+        <div class="kpi-value" id="kpi-decolagens-intl">—</div>
+        <div class="kpi-sub" id="kpi-decolagens-intl-sub"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Passageiros pagos no período</div>
+        <div class="kpi-value" id="kpi-passageiros-periodo">—</div>
+        <div class="kpi-sub">todas as empresas, 2000–2026</div>
+      </div>
     </div>
 
     <div class="section-block">
       <div class="section-head">
-        <h2>Passageiros embarcados por região — <span id="regiao-ano-label">2019</span></h2>
+        <h2>Participação de mercado por companhia aérea</h2>
       </div>
       <p class="section-desc">
-        Total de passageiros (pagos e grátis) que embarcaram em aeroportos de cada região do Brasil no ano
-        selecionado no controle da aba de mapa. Voos com origem no exterior não têm região e ficam fora
-        desta visão.
+        Participação percentual de passageiros pagos por empresa. As oito maiores empresas do período
+        aparecem individualmente; o restante é agrupado em "Outras".
       </p>
-      <div class="chart-wrap short"><canvas id="chart-regiao"></canvas></div>
+      <div class="controls-row">
+        <div class="toggle-group" id="toggle-granularidade">
+          <button data-modo="ano" class="active">Por ano (série completa)</button>
+          <button data-modo="mes">Por mês (um ano)</button>
+        </div>
+        <div class="filter-field" id="campo-ano-mercado" style="display:none;">
+          <label for="ano-mercado-mes">Ano</label>
+          <select id="ano-mercado-mes"></select>
+        </div>
+      </div>
+      <div class="chart-wrap tall"><canvas id="chart-mercado"></canvas></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-head">
+        <h2>Passageiros embarcados por região / estado</h2>
+      </div>
+      <p class="section-desc">
+        Total de passageiros (pagos e grátis) que embarcaram em aeroportos do Brasil. Voos com origem no
+        exterior não têm região/estado e ficam fora desta visão. Filtro por companhia aérea ainda não
+        disponível nesta visão — fica para uma próxima iteração do case.
+      </p>
+      <div class="controls-row">
+        <div class="toggle-group" id="toggle-visao-regional">
+          <button data-visao="total" class="active">Total do período</button>
+          <button data-visao="ano">Evolução anual</button>
+          <button data-visao="mes">Evolução mensal</button>
+        </div>
+        <div class="toggle-group" id="toggle-agrupamento-regional">
+          <button data-agrupa="regiao" class="active">Por região</button>
+          <button data-agrupa="uf">Por estado (UF)</button>
+        </div>
+        <div class="filter-field" id="campo-ano-regional" style="display:none;">
+          <label for="ano-regional-mes">Ano</label>
+          <select id="ano-regional-mes"></select>
+        </div>
+      </div>
+      <div class="chart-wrap tall"><canvas id="chart-regiao"></canvas></div>
     </div>
   </section>
 
@@ -500,12 +515,14 @@
   <a href="https://github.com/Danielterra13-lang/projeto-anac" target="_blank" rel="noopener">código no GitHub</a>
 </footer>
 
+<!-- O JavaScript continua no arquivo indicado abaixo -->
 <script>
 (function () {
   "use strict";
 
   var state = {
     rotas: [],
+    rotasEmpresas: {},
     mercado: [],
     regional: [],
     ano: 2019,
@@ -515,10 +532,25 @@
     layerAeroportos: null,
     chartMercado: null,
     chartRegiao: null,
-    granularidadeMercado: "ano"
+    granularidadeMercado: "ano",
+    anoMercadoMes: 2019,
+    visaoRegional: "total",
+    agrupamentoRegional: "regiao",
+    anoRegionalMes: 2019,
+    filtroAeroporto: "",
+    filtroEmpresa: ""
   };
 
-  var REGIAO_ORDEM = ["Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul"];
+  var REGIOES_LABEL = ["Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul"];
+
+  // ---------- Utilitários ----------
+
+  function normalizar(texto) {
+    if (texto === null || texto === undefined) return "";
+    return String(texto)
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase().trim();
+  }
 
   function fmtInt(n) {
     if (!Number.isFinite(n)) return "—";
@@ -532,34 +564,36 @@
 
   function flipUpdate(el, novoTexto, classeExtra) {
     el.classList.remove("flip");
-    void el.offsetWidth; // reinicia a animação
+    void el.offsetWidth;
     el.textContent = novoTexto;
-    if (classeExtra) {
-      el.classList.remove("is-crash", "is-recovery");
-      el.classList.add(classeExtra);
-    }
+    el.classList.remove("is-crash", "is-recovery");
+    if (classeExtra) el.classList.add(classeExtra);
     el.classList.add("flip");
   }
+
+  var MESES_ABREV = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
   // ---------- Carregamento dos dados ----------
 
   function carregarDados() {
     return Promise.all([
       fetch("data/rotas_mensal.json").then(function (r) { return r.json(); }),
+      fetch("data/rotas_empresas.json").then(function (r) { return r.json(); }).catch(function () { return {}; }),
       fetch("data/mercado_mensal.json").then(function (r) { return r.json(); }),
       fetch("data/regional_mensal.json").then(function (r) { return r.json(); }),
       fetch("data/metadata.json").then(function (r) { return r.json(); }).catch(function () { return null; })
     ]).then(function (res) {
       state.rotas = res[0];
-      state.mercado = res[1];
-      state.regional = res[2];
+      state.rotasEmpresas = res[1] || {};
+      state.mercado = res[2];
+      state.regional = res[3];
 
       var anosSet = {};
       state.rotas.forEach(function (r) { anosSet[r.ano] = true; });
       state.anos = Object.keys(anosSet).map(Number).sort(function (a, b) { return a - b; });
 
-      if (res[3] && res[3].atualizado_em) {
-        var d = new Date(res[3].atualizado_em);
+      if (res[4] && res[4].atualizado_em) {
+        var d = new Date(res[4].atualizado_em);
         document.getElementById("meta-atualizado").textContent = d.toLocaleDateString("pt-BR", {
           day: "2-digit", month: "2-digit", year: "numeric"
         });
@@ -587,10 +621,7 @@
   // ---------- Mapa ----------
 
   function initMapa() {
-    state.mapa = L.map("map", {
-      worldCopyJump: false,
-      minZoom: 2
-    }).setView([-14.2, -51.9], 4);
+    state.mapa = L.map("map", { worldCopyJump: false, minZoom: 2 }).setView([-14.2, -51.9], 4);
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
@@ -602,8 +633,6 @@
     state.layerAeroportos = L.layerGroup().addTo(state.mapa);
   }
 
-  // gera pontos ao longo de uma curva suave entre origem e destino,
-  // pra parecer uma rota de voo em vez de uma linha reta rígida
   function pontosCurva(lat1, lon1, lat2, lon2) {
     var pontos = [];
     var midLat = (lat1 + lat2) / 2;
@@ -612,13 +641,11 @@
     var dLon = lon2 - lon1;
     var dist = Math.sqrt(dLat * dLat + dLon * dLon);
     var offset = dist * 0.12;
-    // deslocamento perpendicular ao segmento, pra curvar a linha
     var perpLat = -dLon;
     var perpLon = dLat;
     var norm = Math.sqrt(perpLat * perpLat + perpLon * perpLon) || 1;
     var ctrlLat = midLat + (perpLat / norm) * offset;
     var ctrlLon = midLon + (perpLon / norm) * offset;
-
     var steps = 24;
     for (var i = 0; i <= steps; i++) {
       var t = i / steps;
@@ -629,15 +656,54 @@
     return pontos;
   }
 
+  function chaveRota(ano, origem, destino) {
+    return ano + "|" + origem + "|" + destino;
+  }
+
+  // Aplica os filtros de aeroporto/empresa a uma lista de rotas de um ano.
+  // Quando ha filtro de empresa, tambem devolve o volume especifico daquela
+  // empresa na rota (pra espessura da linha refletir a empresa, nao o total).
+  function aplicarFiltros(rotasAno) {
+    var aeroporto = state.filtroAeroporto;
+    var empresa = state.filtroEmpresa;
+
+    return rotasAno
+      .filter(function (r) {
+        if (aeroporto && r.aeroporto_origem_sigla !== aeroporto && r.aeroporto_destino_sigla !== aeroporto) {
+          return false;
+        }
+        if (empresa) {
+          var chave = chaveRota(r.ano, r.aeroporto_origem_sigla, r.aeroporto_destino_sigla);
+          var lista = state.rotasEmpresas[chave] || [];
+          var achou = lista.some(function (e) { return e.sigla === empresa; });
+          if (!achou) return false;
+        }
+        return true;
+      })
+      .map(function (r) {
+        if (!empresa) return r;
+        var chave = chaveRota(r.ano, r.aeroporto_origem_sigla, r.aeroporto_destino_sigla);
+        var lista = state.rotasEmpresas[chave] || [];
+        var infoEmpresa = lista.filter(function (e) { return e.sigla === empresa; })[0];
+        if (!infoEmpresa) return r;
+        // cria uma copia com o volume recalculado so pra essa empresa
+        var copia = Object.assign({}, r);
+        copia._passageirosEmpresa = infoEmpresa.passageiros_pagos;
+        return copia;
+      });
+  }
+
   function renderMapaAno(ano) {
     state.layerRotas.clearLayers();
     state.layerAeroportos.clearLayers();
 
     var rotasAno = state.rotas.filter(function (r) { return r.ano === ano; });
+    rotasAno = aplicarFiltros(rotasAno);
 
     var maxPax = 0;
     rotasAno.forEach(function (r) {
-      if (r.total_passageiros > maxPax) maxPax = r.total_passageiros;
+      var valor = r._passageirosEmpresa || r.total_passageiros;
+      if (valor > maxPax) maxPax = valor;
     });
 
     var aeroportos = {};
@@ -645,22 +711,35 @@
     rotasAno.forEach(function (r) {
       if (!Number.isFinite(r.origem_lat) || !Number.isFinite(r.destino_lat)) return;
 
-      var pesoRelativo = maxPax > 0 ? r.total_passageiros / maxPax : 0;
-      var largura = 0.6 + pesoRelativo * 3.4;
-      var opacidade = 0.28 + pesoRelativo * 0.55;
+      var valorLinha = r._passageirosEmpresa || r.total_passageiros;
+      var pesoRelativo = maxPax > 0 ? valorLinha / maxPax : 0;
+      var largura = 1.4 + pesoRelativo * 7.2;
+      var opacidade = 0.38 + pesoRelativo * 0.55;
+
+      var chaveEmp = chaveRota(r.ano, r.aeroporto_origem_sigla, r.aeroporto_destino_sigla);
+      var listaEmpresas = state.rotasEmpresas[chaveEmp] || [];
 
       var linha = L.polyline(
         pontosCurva(r.origem_lat, r.origem_lon, r.destino_lat, r.destino_lon),
         { color: "#F2A93B", weight: largura, opacity: opacidade, smoothFactor: 1 }
       );
 
+      var htmlEmpresas = listaEmpresas.slice(0, 5).map(function (e) {
+        return '<div class="empresa-linha"><span>' + e.sigla + '</span><b>' + fmtPct(e.pct) + '</b></div>';
+      }).join("");
+
       linha.bindPopup(
         '<span class="route-popup">' +
         '<span class="route-title">' + r.aeroporto_origem_sigla + ' → ' + r.aeroporto_destino_sigla + '</span>' +
         '<span class="route-stat">' + fmtInt(r.total_passageiros) + ' passageiros em ' + ano + '</span><br>' +
         '<span class="route-stat">load factor ' + fmtPct(r.load_factor) + '</span>' +
+        (htmlEmpresas ? '<hr style="border-color:#262C3A;margin:6px 0">' + htmlEmpresas : '') +
         '</span>'
       );
+
+      linha.on("mouseover", function () { linha.setStyle({ opacity: Math.min(1, opacidade + 0.35), weight: largura + 2 }); linha.bringToFront(); });
+      linha.on("mouseout", function () { linha.setStyle({ opacity: opacidade, weight: largura }); });
+
       state.layerRotas.addLayer(linha);
 
       aeroportos[r.aeroporto_origem_sigla] = { lat: r.origem_lat, lon: r.origem_lon, nome: r.aeroporto_origem_nome };
@@ -670,11 +749,7 @@
     Object.keys(aeroportos).forEach(function (sigla) {
       var a = aeroportos[sigla];
       var marcador = L.circleMarker([a.lat, a.lon], {
-        radius: 3.5,
-        color: "#3FA796",
-        fillColor: "#3FA796",
-        fillOpacity: 0.9,
-        weight: 1
+        radius: 3.5, color: "#3FA796", fillColor: "#3FA796", fillOpacity: 0.9, weight: 1
       });
       marcador.bindPopup('<span class="route-popup"><span class="route-title">' + sigla + '</span>' +
         '<span class="route-stat">' + (a.nome || "") + '</span></span>');
@@ -704,21 +779,27 @@
     flipUpdate(document.getElementById("kpi-rotas"), fmtInt(rotasAno.length), classe);
   }
 
+  function atualizarNotaFiltro() {
+    var nota = document.getElementById("filtro-nota");
+    var partes = [];
+    if (state.filtroAeroporto) partes.push("aeroporto " + state.filtroAeroporto);
+    if (state.filtroEmpresa) partes.push("companhia " + state.filtroEmpresa);
+    nota.textContent = partes.length ? "Filtrando por: " + partes.join(" + ") : "";
+  }
+
   function irParaAno(ano) {
     ano = Math.max(state.anos[0], Math.min(state.anos[state.anos.length - 1], ano));
     state.ano = ano;
 
     var display = document.getElementById("year-display");
     flipUpdate(display, String(ano));
-    if (ano === 2020) display.style.color = "var(--rust)";
-    else display.style.color = "var(--amber)";
+    display.style.color = ano === 2020 ? "var(--rust)" : "var(--amber)";
 
     document.getElementById("year-slider").value = ano;
-    document.getElementById("regiao-ano-label").textContent = ano;
 
     var rotasAno = renderMapaAno(ano);
     atualizarKpis(ano, rotasAno);
-    renderChartRegiao(ano);
+    atualizarNotaFiltro();
   }
 
   function initControleAno() {
@@ -726,43 +807,96 @@
     slider.min = state.anos[0];
     slider.max = state.anos[state.anos.length - 1];
     slider.value = 2019;
+    slider.addEventListener("input", function () { irParaAno(parseInt(slider.value, 10)); });
+  }
 
-    slider.addEventListener("input", function () {
-      irParaAno(parseInt(slider.value, 10));
+  function initFiltrosMapa() {
+    var selectAeroporto = document.getElementById("filtro-aeroporto");
+    var selectEmpresa = document.getElementById("filtro-empresa");
+
+    var aeroportos = {};
+    state.rotas.forEach(function (r) {
+      aeroportos[r.aeroporto_origem_sigla] = r.aeroporto_origem_nome;
+      aeroportos[r.aeroporto_destino_sigla] = r.aeroporto_destino_nome;
+    });
+    Object.keys(aeroportos).sort(function (a, b) {
+      return (aeroportos[a] || "").localeCompare(aeroportos[b] || "");
+    }).forEach(function (sigla) {
+      var opt = document.createElement("option");
+      opt.value = sigla;
+      opt.textContent = sigla + " — " + (aeroportos[sigla] || "");
+      selectAeroporto.appendChild(opt);
+    });
+
+    var empresasTotais = {};
+    state.mercado.forEach(function (r) {
+      var sigla = r.empresa_sigla || "N/D";
+      empresasTotais[sigla] = (empresasTotais[sigla] || 0) + (r.total_passageiros_pagos || 0);
+    });
+    Object.keys(empresasTotais).sort(function (a, b) { return empresasTotais[b] - empresasTotais[a]; })
+      .forEach(function (sigla) {
+        var opt = document.createElement("option");
+        opt.value = sigla;
+        opt.textContent = sigla;
+        selectEmpresa.appendChild(opt);
+      });
+
+    selectAeroporto.addEventListener("change", function () {
+      state.filtroAeroporto = selectAeroporto.value;
+      irParaAno(state.ano);
+    });
+    selectEmpresa.addEventListener("change", function () {
+      state.filtroEmpresa = selectEmpresa.value;
+      irParaAno(state.ano);
+    });
+    document.getElementById("filtro-limpar").addEventListener("click", function () {
+      selectAeroporto.value = "";
+      selectEmpresa.value = "";
+      state.filtroAeroporto = "";
+      state.filtroEmpresa = "";
+      irParaAno(state.ano);
     });
   }
 
   // ---------- Gráfico de mercado ----------
 
-  var PALETA_EMPRESAS = ["#F2A93B", "#3FA796", "#8FB8DE", "#C9564F", "#9C7BD6", "#E0C46C", "#5B8C7B", "#D98E5B", "#5F6B85"];
+  var PALETA = ["#F2A93B", "#3FA796", "#8FB8DE", "#C9564F", "#9C7BD6", "#E0C46C", "#5B8C7B", "#D98E5B", "#5F6B85"];
 
-  function agregarMercado(modo) {
-    var chave = function (r) { return modo === "mes" ? (r.ano + "-" + String(r.mes).padStart(2, "0")) : String(r.ano); };
-
-    var totaisPorEmpresa = {};
+  function topEmpresasGeral(limite) {
+    var totais = {};
     state.mercado.forEach(function (r) {
       var e = r.empresa_sigla || "N/D";
-      totaisPorEmpresa[e] = (totaisPorEmpresa[e] || 0) + (r.total_passageiros_pagos || 0);
+      totais[e] = (totais[e] || 0) + (r.total_passageiros_pagos || 0);
     });
-    var topEmpresas = Object.keys(totaisPorEmpresa)
-      .sort(function (a, b) { return totaisPorEmpresa[b] - totaisPorEmpresa[a]; })
-      .slice(0, 8);
+    return Object.keys(totais).sort(function (a, b) { return totais[b] - totais[a]; }).slice(0, limite);
+  }
+
+  function agregarMercado(modo, ano) {
+    var topEmpresas = topEmpresasGeral(8);
     var topSet = {};
     topEmpresas.forEach(function (e) { topSet[e] = true; });
 
+    var registros = modo === "mes" ? state.mercado.filter(function (r) { return r.ano === ano; }) : state.mercado;
+
+    var chave = function (r) {
+      return modo === "mes" ? MESES_ABREV[r.mes - 1] : String(r.ano);
+    };
+    var ordemChave = function (r) { return modo === "mes" ? r.mes : r.ano; };
+
     var periodos = [];
     var periodosSet = {};
-    var matriz = {}; // periodo -> empresa -> total
+    var ordemMap = {};
+    var matriz = {};
 
-    state.mercado.forEach(function (r) {
+    registros.forEach(function (r) {
       var p = chave(r);
-      if (!periodosSet[p]) { periodosSet[p] = true; periodos.push(p); }
+      if (!periodosSet[p]) { periodosSet[p] = true; periodos.push(p); ordemMap[p] = ordemChave(r); }
       var empresa = topSet[r.empresa_sigla] ? r.empresa_sigla : "Outras";
       matriz[p] = matriz[p] || {};
       matriz[p][empresa] = (matriz[p][empresa] || 0) + (r.total_passageiros_pagos || 0);
     });
 
-    periodos.sort();
+    periodos.sort(function (a, b) { return ordemMap[a] - ordemMap[b]; });
 
     var series = topEmpresas.concat(["Outras"]);
     var datasets = series.map(function (empresa, i) {
@@ -773,7 +907,7 @@
           var valor = (matriz[p] && matriz[p][empresa]) || 0;
           return totalPeriodo > 0 ? (valor / totalPeriodo) * 100 : 0;
         }),
-        backgroundColor: PALETA_EMPRESAS[i % PALETA_EMPRESAS.length],
+        backgroundColor: PALETA[i % PALETA.length],
         borderWidth: 0,
         stack: "market"
       };
@@ -783,9 +917,8 @@
   }
 
   function renderChartMercado() {
-    var dados = agregarMercado(state.granularidadeMercado);
+    var dados = agregarMercado(state.granularidadeMercado, state.anoMercadoMes);
     var ctx = document.getElementById("chart-mercado").getContext("2d");
-
     if (state.chartMercado) state.chartMercado.destroy();
 
     state.chartMercado = new Chart(ctx, {
@@ -805,6 +938,7 @@
             backgroundColor: "#171C28",
             titleFont: { family: "IBM Plex Mono" },
             bodyFont: { family: "IBM Plex Sans" },
+            itemSort: function (a, b) { return b.parsed.y - a.parsed.y; },
             callbacks: { label: function (ctx) { return ctx.dataset.label + ": " + ctx.parsed.y.toFixed(1) + "%"; } }
           }
         }
@@ -812,47 +946,159 @@
     });
   }
 
+  function initToggleGranularidade() {
+    var botoes = document.querySelectorAll("#toggle-granularidade button");
+    var campoAno = document.getElementById("campo-ano-mercado");
+    var selectAno = document.getElementById("ano-mercado-mes");
+
+    state.anos.forEach(function (a) {
+      var opt = document.createElement("option");
+      opt.value = a; opt.textContent = a;
+      if (a === state.anoMercadoMes) opt.selected = true;
+      selectAno.appendChild(opt);
+    });
+
+    botoes.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        botoes.forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        state.granularidadeMercado = btn.dataset.modo;
+        campoAno.style.display = btn.dataset.modo === "mes" ? "flex" : "none";
+        renderChartMercado();
+      });
+    });
+
+    selectAno.addEventListener("change", function () {
+      state.anoMercadoMes = parseInt(selectAno.value, 10);
+      renderChartMercado();
+    });
+  }
+
   // ---------- Gráfico regional ----------
 
-  function renderChartRegiao(ano) {
+  function chaveAgrupamento(registro) {
+    return state.agrupamentoRegional === "uf" ? registro.aeroporto_origem_uf : registro.aeroporto_origem_regiao;
+  }
+
+  function ordemCategorias(categorias) {
+    if (state.agrupamentoRegional !== "regiao") return categorias.sort();
+    var normalizadas = REGIOES_LABEL.map(normalizar);
+    return categorias.sort(function (a, b) {
+      return normalizadas.indexOf(normalizar(a)) - normalizadas.indexOf(normalizar(b));
+    });
+  }
+
+  function rotuloCategoria(valorBruto) {
+    if (state.agrupamentoRegional !== "regiao") return valorBruto;
+    var idx = REGIOES_LABEL.map(normalizar).indexOf(normalizar(valorBruto));
+    return idx >= 0 ? REGIOES_LABEL[idx] : valorBruto;
+  }
+
+  function renderChartRegiaoTotal() {
     var totais = {};
-    REGIAO_ORDEM.forEach(function (r) { totais[r] = 0; });
+    state.regional.forEach(function (r) {
+      var cat = chaveAgrupamento(r);
+      if (!cat) return;
+      totais[cat] = (totais[cat] || 0) + (r.total_passageiros || 0);
+    });
 
-    state.regional
-      .filter(function (r) { return r.ano === ano && r.aeroporto_origem_regiao; })
-      .forEach(function (r) {
-        var reg = r.aeroporto_origem_regiao;
-        totais[reg] = (totais[reg] || 0) + (r.total_passageiros || 0);
-      });
+    var categorias = ordemCategorias(Object.keys(totais));
+    var labels = categorias.map(rotuloCategoria);
+    var valores = categorias.map(function (c) { return totais[c]; });
 
-    var labels = REGIAO_ORDEM.filter(function (r) { return totais[r] !== undefined; });
-    var valores = labels.map(function (r) { return totais[r]; });
+    montarChartRegiao({
+      type: "bar",
+      data: { labels: labels, datasets: [{ label: "Passageiros embarcados (total do período)", data: valores, backgroundColor: "#F2A93B", borderRadius: 2, maxBarThickness: 64 }] },
+      escalaX: "categoria"
+    });
+  }
 
+  function renderChartRegiaoEvolucaoAnual() {
+    var categoriasSet = {};
+    state.regional.forEach(function (r) { var c = chaveAgrupamento(r); if (c) categoriasSet[c] = true; });
+    var categorias = ordemCategorias(Object.keys(categoriasSet));
+
+    var matriz = {};
+    state.regional.forEach(function (r) {
+      var cat = chaveAgrupamento(r);
+      if (!cat) return;
+      matriz[r.ano] = matriz[r.ano] || {};
+      matriz[r.ano][cat] = (matriz[r.ano][cat] || 0) + (r.total_passageiros || 0);
+    });
+
+    var datasets = categorias.map(function (cat, i) {
+      return {
+        label: rotuloCategoria(cat),
+        data: state.anos.map(function (ano) { return (matriz[ano] && matriz[ano][cat]) || 0; }),
+        borderColor: PALETA[i % PALETA.length],
+        backgroundColor: PALETA[i % PALETA.length],
+        tension: 0.25,
+        fill: false,
+        pointRadius: 2
+      };
+    });
+
+    montarChartRegiao({
+      type: "line",
+      data: { labels: state.anos, datasets: datasets },
+      escalaX: "linha"
+    });
+  }
+
+  function renderChartRegiaoEvolucaoMensal() {
+    var ano = state.anoRegionalMes;
+    var categoriasSet = {};
+    state.regional.forEach(function (r) { var c = chaveAgrupamento(r); if (c) categoriasSet[c] = true; });
+    var categorias = ordemCategorias(Object.keys(categoriasSet));
+
+    var matriz = {};
+    state.regional.filter(function (r) { return r.ano === ano; }).forEach(function (r) {
+      var cat = chaveAgrupamento(r);
+      if (!cat) return;
+      matriz[r.mes] = matriz[r.mes] || {};
+      matriz[r.mes][cat] = (matriz[r.mes][cat] || 0) + (r.total_passageiros || 0);
+    });
+
+    var datasets = categorias.map(function (cat, i) {
+      return {
+        label: rotuloCategoria(cat),
+        data: MESES_ABREV.map(function (_, idx) { var m = idx + 1; return (matriz[m] && matriz[m][cat]) || 0; }),
+        borderColor: PALETA[i % PALETA.length],
+        backgroundColor: PALETA[i % PALETA.length],
+        tension: 0.25,
+        fill: false,
+        pointRadius: 2
+      };
+    });
+
+    montarChartRegiao({
+      type: "line",
+      data: { labels: MESES_ABREV, datasets: datasets },
+      escalaX: "linha"
+    });
+  }
+
+  function montarChartRegiao(config) {
     var ctx = document.getElementById("chart-regiao").getContext("2d");
     if (state.chartRegiao) state.chartRegiao.destroy();
 
+    var legend = config.data.datasets.length > 1;
+
     state.chartRegiao = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Passageiros embarcados",
-          data: valores,
-          backgroundColor: "#F2A93B",
-          borderRadius: 2,
-          maxBarThickness: 64
-        }]
-      },
+      type: config.type,
+      data: config.data,
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: config.type === "line" ? { mode: "index", intersect: false } : undefined,
         plugins: {
-          legend: { display: false },
+          legend: { display: legend, position: "bottom", labels: { color: "#B7BECC", font: { family: "IBM Plex Sans", size: 11 }, boxWidth: 12 } },
           tooltip: {
             backgroundColor: "#171C28",
             titleFont: { family: "IBM Plex Mono" },
             bodyFont: { family: "IBM Plex Sans" },
-            callbacks: { label: function (ctx) { return fmtInt(ctx.parsed.y) + " passageiros"; } }
+            itemSort: function (a, b) { return b.parsed.y - a.parsed.y; },
+            callbacks: { label: function (c) { return c.dataset.label + ": " + fmtInt(c.parsed.y); } }
           }
         },
         scales: {
@@ -863,35 +1109,100 @@
     });
   }
 
-  function initToggleGranularidade() {
-    var botoes = document.querySelectorAll("#toggle-granularidade button");
-    botoes.forEach(function (btn) {
+  function renderChartRegiao() {
+    if (state.visaoRegional === "total") renderChartRegiaoTotal();
+    else if (state.visaoRegional === "ano") renderChartRegiaoEvolucaoAnual();
+    else renderChartRegiaoEvolucaoMensal();
+  }
+
+  function initControlesRegional() {
+    var botoesVisao = document.querySelectorAll("#toggle-visao-regional button");
+    var botoesAgrupa = document.querySelectorAll("#toggle-agrupamento-regional button");
+    var campoAno = document.getElementById("campo-ano-regional");
+    var selectAno = document.getElementById("ano-regional-mes");
+
+    state.anos.forEach(function (a) {
+      var opt = document.createElement("option");
+      opt.value = a; opt.textContent = a;
+      if (a === state.anoRegionalMes) opt.selected = true;
+      selectAno.appendChild(opt);
+    });
+
+    botoesVisao.forEach(function (btn) {
       btn.addEventListener("click", function () {
-        botoes.forEach(function (b) { b.classList.remove("active"); });
+        botoesVisao.forEach(function (b) { b.classList.remove("active"); });
         btn.classList.add("active");
-        state.granularidadeMercado = btn.dataset.modo;
-        renderChartMercado();
+        state.visaoRegional = btn.dataset.visao;
+        campoAno.style.display = btn.dataset.visao === "mes" ? "flex" : "none";
+        renderChartRegiao();
       });
     });
+
+    botoesAgrupa.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        botoesAgrupa.forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        state.agrupamentoRegional = btn.dataset.agrupa;
+        renderChartRegiao();
+      });
+    });
+
+    selectAno.addEventListener("change", function () {
+      state.anoRegionalMes = parseInt(selectAno.value, 10);
+      renderChartRegiao();
+    });
+  }
+
+  // ---------- Cards de indicadores do Gate 2 ----------
+
+  function renderKpisMercado() {
+    var decolagensPorEmpresa = {};
+    var nomePorEmpresa = {};
+    var decolagensIntl = 0;
+    var passageirosTotal = 0;
+
+    state.mercado.forEach(function (r) {
+      var sigla = r.empresa_sigla || "N/D";
+      decolagensPorEmpresa[sigla] = (decolagensPorEmpresa[sigla] || 0) + (r.total_decolagens || 0);
+      nomePorEmpresa[sigla] = r.empresa_nome || sigla;
+      passageirosTotal += r.total_passageiros_pagos || 0;
+      if (normalizar(r.natureza) === "INTERNACIONAL") decolagensIntl += r.total_decolagens || 0;
+    });
+
+    var lider = Object.keys(decolagensPorEmpresa).sort(function (a, b) { return decolagensPorEmpresa[b] - decolagensPorEmpresa[a]; })[0];
+
+    document.getElementById("kpi-lider-decolagens").textContent = lider || "—";
+    document.getElementById("kpi-lider-decolagens-sub").textContent = lider ? fmtInt(decolagensPorEmpresa[lider]) + " decolagens" : "";
+    document.getElementById("kpi-decolagens-intl").textContent = fmtInt(decolagensIntl);
+    document.getElementById("kpi-decolagens-intl-sub").textContent = "de " + fmtInt(Object.values(decolagensPorEmpresa).reduce(function (a, b) { return a + b; }, 0)) + " decolagens totais";
+    document.getElementById("kpi-passageiros-periodo").textContent = fmtInt(passageirosTotal);
   }
 
   // ---------- Inicialização ----------
 
-    initTabs();
-    carregarDados().then(function () {;
+  initTabs();
+
+  carregarDados().then(function () {
     initMapa();
     initControleAno();
-    initToggleGranularidade();
+    initFiltrosMapa();
     irParaAno(2019);
+
+    initToggleGranularidade();
     renderChartMercado();
+
+    initControlesRegional();
+    renderChartRegiao();
+
+    renderKpisMercado();
   }).catch(function (erro) {
     document.querySelector("main").innerHTML =
       '<p style="color:#C9564F;font-family:var(--mono)">Não foi possível carregar os dados (' + erro + '). ' +
-      'Confirme que os arquivos data/rotas_mensal.json, data/mercado_mensal.json e data/regional_mensal.json ' +
-      'estão na mesma pasta que este HTML.</p>';
+      'Confirme que a pasta data/ está publicada junto com este HTML.</p>';
   });
 
 })();
+
 </script>
 
 </body>
