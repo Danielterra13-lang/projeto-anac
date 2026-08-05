@@ -54,4 +54,5 @@ select
     safe_cast(bagagem_kg as float64) as bagagem_kg
 
 from fonte
-where ano is not null and ano != ''
+where safe_cast(ano as int64) is not null
+  and safe_cast(mes as int64) is not null
