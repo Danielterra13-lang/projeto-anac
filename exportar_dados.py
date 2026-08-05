@@ -104,7 +104,7 @@ def exportar_empresas_por_rota(client, rotas_df, top_n_empresas=5):
             lista.append({
                 "sigla": linha["empresa_sigla"],
                 "nome": linha["empresa_nome"],
-                "passageiros_pagos": int(linha["total_passageiros_pagos"]),
+                "passageiros_pagos": int(linha["total_passageiros_pagos"]) if pd.notna(linha["total_passageiros_pagos"]) else 0,
                 "pct": pct,
             })
         chave_str = f"{int(ano)}|{origem}|{destino}"
