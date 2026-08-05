@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malha Aérea Brasileira — Dados Estatísticos ANAC</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+
+<style>
+  :root {
+    --bg: #0A0D13;
+    --bg-panel: #12161F;
+    --bg-panel-raised: #171C28;
+    --hairline: #262C3A;
+    --amber: #F2A93B;
+    --amber-dim: #7A5A22;
+    --teal: #3FA796;
+    --rust: #C9564F;
+    --text: #E7E9EE;
+    --text-muted: #838EA3;
+    --text-faint: #4B5468;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--amber); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Cabeçalho estilo painel de embarque ---------- */
+
+  .board-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 28px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--hairline);
+    flex-wrap: wrap;
+  }
+
+  .board-title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .board-title .mark {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    border: 1px solid var(--amber-dim);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .board-title h1 {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .board-title .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--sans);
+  }
+
+  .board-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  .board-meta span { color: var(--text-muted); }
+
+  /* ---------- Abas (gates) ---------- */
+
+  .gate-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 0 28px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .gate-tab {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 14px 18px 12px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .gate-tab .gate-num {
+    color: var(--text-faint);
+    margin-right: 8px;
+  }
+
+  .gate-tab:hover { color: var(--text); }
+
+  .gate-tab.active {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+  }
+
+  .gate-tab.active .gate-num { color: var(--amber-dim); }
+
+  /* ---------- Layout geral ---------- */
+
+  main { padding: 24px 28px 60px; max-width: 1320px; margin: 0 auto; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .panel-intro {
+    font-size: 13px;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin: 0 0 20px;
+    line-height: 1.55;
+  }
+
+  /* ---------- Faixa de KPIs (estilo flap) ---------- */
+
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .kpi-card {
+    background: var(--bg-panel);
+    padding: 16px 18px;
+    overflow: hidden;
+  }
+
+  .kpi-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  .kpi-value.flip {
+    animation: flap 0.32s ease;
+  }
+
+  .kpi-value .accent { color: var(--amber); }
+  .kpi-value.is-crash .accent { color: var(--rust); }
+  .kpi-value.is-recovery .accent { color: var(--teal); }
+
+  @keyframes flap {
+    0%   { transform: translateY(0);    opacity: 1; filter: blur(0); }
+    35%  { transform: translateY(-40%); opacity: 0; filter: blur(2px); }
+    36%  { transform: translateY(40%);  opacity: 0; filter: blur(2px); }
+    100% { transform: translateY(0);    opacity: 1; filter: blur(0); }
+  }
+
+  /* ---------- Slider de ano (compartilhado entre abas) ---------- */
+
+  .year-control {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .year-display {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--amber);
+    min-width: 92px;
+    text-align: center;
+    background: #000000;
+    border: 1px solid var(--amber-dim);
+    border-radius: 3px;
+    padding: 4px 8px;
+  }
+
+  .year-display.flip { animation: flap 0.32s ease; }
+
+  .year-slider-wrap { flex: 1; min-width: 220px; }
+
+  .year-slider-wrap input[type="range"] {
+    width: 100%;
+    accent-color: var(--amber);
+    background: transparent;
+  }
+
+  .year-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 2px;
+  }
+
+  .year-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    max-width: 200px;
+  }
+
+  .year-note strong { color: var(--rust); }
+
+  /* ---------- Mapa ---------- */
+
+  #map {
+    height: 560px;
+    border: 1px solid var(--hairline);
+    background: var(--bg-panel);
+  }
+
+  .leaflet-popup-content-wrapper {
+    background: var(--bg-panel-raised);
+    color: var(--text);
+    border-radius: 4px;
+    font-family: var(--sans);
+  }
+  .leaflet-popup-tip { background: var(--bg-panel-raised); }
+  .route-popup .route-title {
+    font-family: var(--mono);
+    color: var(--amber);
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .route-popup .route-stat { font-size: 12px; color: var(--text-muted); }
+
+  .map-legend {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    padding: 10px 4px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+  .map-legend .swatch {
+    display: inline-block;
+    width: 18px;
+    height: 3px;
+    background: var(--amber);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .map-legend .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ---------- Aba de mercado ---------- */
+
+  .section-block {
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    padding: 20px;
+    margin-bottom: 22px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .section-head h2 {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .section-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin: 4px 0 16px;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+
+  .toggle-group {
+    display: inline-flex;
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .toggle-group button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--bg-panel-raised);
+    color: var(--text-muted);
+    border: none;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+
+  .toggle-group button + button { border-left: 1px solid var(--hairline); }
+  .toggle-group button.active { background: var(--amber-dim); color: var(--bg); }
+
+  .chart-wrap { height: 340px; position: relative; }
+  .chart-wrap.short { height: 300px; }
+
+  footer {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 20px 28px 40px;
+    font-size: 12px;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    border-top: 1px solid var(--hairline);
+  }
+
+  @media (max-width: 760px) {
+    .kpi-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .board-header { flex-direction: column; align-items: flex-start; }
+    .board-meta { text-align: left; }
+    #map { height: 420px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kpi-value.flip, .year-display.flip { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="board-header">
+  <div class="board-title">
+    <span class="mark">ANAC · 2000–2026</span>
+    <h1>Malha Aérea Brasileira</h1>
+    <span class="subtitle">crescimento, colapso e recuperação do transporte aéreo no Brasil</span>
+  </div>
+  <div class="board-meta">
+    DADOS ATUALIZADOS EM<br>
+    <span id="meta-atualizado">—</span>
+  </div>
+</header>
+
+<nav class="gate-tabs">
+  <button class="gate-tab active" data-tab="tab-mapa"><span class="gate-num">GATE 01</span>MALHA E ROTAS</button>
+  <button class="gate-tab" data-tab="tab-mercado"><span class="gate-num">GATE 02</span>MERCADO E REGIÕES</button>
+</nav>
+
+<main>
+
+  <!-- ===================== ABA 1: MAPA ===================== -->
+  <section id="tab-mapa" class="tab-panel active">
+    <p class="panel-intro">
+      As 150 rotas com mais passageiros pagos em cada ano, com origem e destino de cada etapa de voo.
+      Mova o controle abaixo para ver a malha se expandir entre 2000 e 2019, colapsar em 2020 e se
+      recuperar nos anos seguintes.
+    </p>
+
+    <div class="kpi-strip" id="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">Passageiros no ano</div>
+        <div class="kpi-value" id="kpi-passageiros">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Decolagens no ano</div>
+        <div class="kpi-value" id="kpi-decolagens">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Load factor médio</div>
+        <div class="kpi-value" id="kpi-loadfactor">—</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Rotas exibidas</div>
+        <div class="kpi-value" id="kpi-rotas">—</div>
+      </div>
+    </div>
+
+    <div class="year-control">
+      <div class="year-slider-wrap">
+        <input type="range" id="year-slider" min="2000" max="2026" step="1" value="2019">
+        <div class="year-ticks"><span>2000</span><span>2010</span><span>2020</span><span>2026</span></div>
+      </div>
+      <div class="year-display" id="year-display">2019</div>
+      <div class="year-note">Em 2020 a malha perdeu mais da metade do volume de passageiros. <strong>Em 2026 os dados cobrem só até o mês mais recente disponível.</strong></div>
+    </div>
+
+    <div id="map"></div>
+    <div class="map-legend">
+      <span><span class="swatch"></span>rota (espessura = volume de passageiros)</span>
+      <span><span class="dot"></span>aeroporto ativo no ano selecionado</span>
+    </div>
+  </section>
+
+  <!-- ===================== ABA 2: MERCADO E REGIÕES ===================== -->
+  <section id="tab-mercado" class="tab-panel">
+    <p class="panel-intro">
+      Concentração de mercado entre companhias aéreas ao longo de toda a série, e o volume de passageiros
+      embarcados por região do Brasil no ano selecionado no controle acima.
+    </p>
+
+    <div class="section-block">
+      <div class="section-head">
+        <h2>Participação de mercado por companhia aérea</h2>
+        <div class="toggle-group" id="toggle-granularidade">
+          <button data-modo="ano" class="active">Por ano</button>
+          <button data-modo="mes">Por mês</button>
+        </div>
+      </div>
+      <p class="section-desc">
+        Participação percentual de passageiros pagos por empresa, série completa 2000–2026. As oito maiores
+        empresas do período aparecem individualmente; o restante é agrupado em "Outras".
+      </p>
+      <div class="chart-wrap"><canvas id="chart-mercado"></canvas></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-head">
+        <h2>Passageiros embarcados por região — <span id="regiao-ano-label">2019</span></h2>
+      </div>
+      <p class="section-desc">
+        Total de passageiros (pagos e grátis) que embarcaram em aeroportos de cada região do Brasil no ano
+        selecionado no controle da aba de mapa. Voos com origem no exterior não têm região e ficam fora
+        desta visão.
+      </p>
+      <div class="chart-wrap short"><canvas id="chart-regiao"></canvas></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Fonte dos dados: ANAC — Dados Estatísticos do Transporte Aéreo · pipeline: BigQuery + dbt + GitHub Actions ·
+  <a href="https://github.com/Danielterra13-lang/projeto-anac" target="_blank" rel="noopener">código no GitHub</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var state = {
+    rotas: [],
+    mercado: [],
+    regional: [],
+    ano: 2019,
+    anos: [],
+    mapa: null,
+    layerRotas: null,
+    layerAeroportos: null,
+    chartMercado: null,
+    chartRegiao: null,
+    granularidadeMercado: "ano"
+  };
+
+  var REGIAO_ORDEM = ["Norte", "Nordeste", "Centro-Oeste", "Sudeste", "Sul"];
+
+  function fmtInt(n) {
+    if (!Number.isFinite(n)) return "—";
+    return Math.round(n).toLocaleString("pt-BR");
+  }
+
+  function fmtPct(n) {
+    if (!Number.isFinite(n)) return "—";
+    return (n * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%";
+  }
+
+  function flipUpdate(el, novoTexto, classeExtra) {
+    el.classList.remove("flip");
+    void el.offsetWidth; // reinicia a animação
+    el.textContent = novoTexto;
+    if (classeExtra) {
+      el.classList.remove("is-crash", "is-recovery");
+      el.classList.add(classeExtra);
+    }
+    el.classList.add("flip");
+  }
+
+  // ---------- Carregamento dos dados ----------
+
+  function carregarDados() {
+    return Promise.all([
+      fetch("data/rotas_mensal.json").then(function (r) { return r.json(); }),
+      fetch("data/mercado_mensal.json").then(function (r) { return r.json(); }),
+      fetch("data/regional_mensal.json").then(function (r) { return r.json(); }),
+      fetch("data/metadata.json").then(function (r) { return r.json(); }).catch(function () { return null; })
+    ]).then(function (res) {
+      state.rotas = res[0];
+      state.mercado = res[1];
+      state.regional = res[2];
+
+      var anosSet = {};
+      state.rotas.forEach(function (r) { anosSet[r.ano] = true; });
+      state.anos = Object.keys(anosSet).map(Number).sort(function (a, b) { return a - b; });
+
+      if (res[3] && res[3].atualizado_em) {
+        var d = new Date(res[3].atualizado_em);
+        document.getElementById("meta-atualizado").textContent = d.toLocaleDateString("pt-BR", {
+          day: "2-digit", month: "2-digit", year: "numeric"
+        });
+      }
+    });
+  }
+
+  // ---------- Abas ----------
+
+  function initTabs() {
+    var tabs = document.querySelectorAll(".gate-tab");
+    tabs.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        tabs.forEach(function (b) { b.classList.remove("active"); });
+        document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+        if (btn.dataset.tab === "tab-mapa" && state.mapa) {
+          setTimeout(function () { state.mapa.invalidateSize(); }, 50);
+        }
+      });
+    });
+  }
+
+  // ---------- Mapa ----------
+
+  function initMapa() {
+    state.mapa = L.map("map", {
+      worldCopyJump: false,
+      minZoom: 2
+    }).setView([-14.2, -51.9], 4);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+      subdomains: "abcd",
+      maxZoom: 19
+    }).addTo(state.mapa);
+
+    state.layerRotas = L.layerGroup().addTo(state.mapa);
+    state.layerAeroportos = L.layerGroup().addTo(state.mapa);
+  }
+
+  // gera pontos ao longo de uma curva suave entre origem e destino,
+  // pra parecer uma rota de voo em vez de uma linha reta rígida
+  function pontosCurva(lat1, lon1, lat2, lon2) {
+    var pontos = [];
+    var midLat = (lat1 + lat2) / 2;
+    var midLon = (lon1 + lon2) / 2;
+    var dLat = lat2 - lat1;
+    var dLon = lon2 - lon1;
+    var dist = Math.sqrt(dLat * dLat + dLon * dLon);
+    var offset = dist * 0.12;
+    // deslocamento perpendicular ao segmento, pra curvar a linha
+    var perpLat = -dLon;
+    var perpLon = dLat;
+    var norm = Math.sqrt(perpLat * perpLat + perpLon * perpLon) || 1;
+    var ctrlLat = midLat + (perpLat / norm) * offset;
+    var ctrlLon = midLon + (perpLon / norm) * offset;
+
+    var steps = 24;
+    for (var i = 0; i <= steps; i++) {
+      var t = i / steps;
+      var lat = (1 - t) * (1 - t) * lat1 + 2 * (1 - t) * t * ctrlLat + t * t * lat2;
+      var lon = (1 - t) * (1 - t) * lon1 + 2 * (1 - t) * t * ctrlLon + t * t * lon2;
+      pontos.push([lat, lon]);
+    }
+    return pontos;
+  }
+
+  function renderMapaAno(ano) {
+    state.layerRotas.clearLayers();
+    state.layerAeroportos.clearLayers();
+
+    var rotasAno = state.rotas.filter(function (r) { return r.ano === ano; });
+
+    var maxPax = 0;
+    rotasAno.forEach(function (r) {
+      if (r.total_passageiros > maxPax) maxPax = r.total_passageiros;
+    });
+
+    var aeroportos = {};
+
+    rotasAno.forEach(function (r) {
+      if (!Number.isFinite(r.origem_lat) || !Number.isFinite(r.destino_lat)) return;
+
+      var pesoRelativo = maxPax > 0 ? r.total_passageiros / maxPax : 0;
+      var largura = 0.6 + pesoRelativo * 3.4;
+      var opacidade = 0.28 + pesoRelativo * 0.55;
+
+      var linha = L.polyline(
+        pontosCurva(r.origem_lat, r.origem_lon, r.destino_lat, r.destino_lon),
+        { color: "#F2A93B", weight: largura, opacity: opacidade, smoothFactor: 1 }
+      );
+
+      linha.bindPopup(
+        '<span class="route-popup">' +
+        '<span class="route-title">' + r.aeroporto_origem_sigla + ' → ' + r.aeroporto_destino_sigla + '</span>' +
+        '<span class="route-stat">' + fmtInt(r.total_passageiros) + ' passageiros em ' + ano + '</span><br>' +
+        '<span class="route-stat">load factor ' + fmtPct(r.load_factor) + '</span>' +
+        '</span>'
+      );
+      state.layerRotas.addLayer(linha);
+
+      aeroportos[r.aeroporto_origem_sigla] = { lat: r.origem_lat, lon: r.origem_lon, nome: r.aeroporto_origem_nome };
+      aeroportos[r.aeroporto_destino_sigla] = { lat: r.destino_lat, lon: r.destino_lon, nome: r.aeroporto_destino_nome };
+    });
+
+    Object.keys(aeroportos).forEach(function (sigla) {
+      var a = aeroportos[sigla];
+      var marcador = L.circleMarker([a.lat, a.lon], {
+        radius: 3.5,
+        color: "#3FA796",
+        fillColor: "#3FA796",
+        fillOpacity: 0.9,
+        weight: 1
+      });
+      marcador.bindPopup('<span class="route-popup"><span class="route-title">' + sigla + '</span>' +
+        '<span class="route-stat">' + (a.nome || "") + '</span></span>');
+      state.layerAeroportos.addLayer(marcador);
+    });
+
+    return rotasAno;
+  }
+
+  function atualizarKpis(ano, rotasAno) {
+    var totalPax = 0, totalDecolagens = 0, somaRpk = 0, somaAsk = 0;
+    rotasAno.forEach(function (r) {
+      totalPax += r.total_passageiros || 0;
+      totalDecolagens += r.total_decolagens || 0;
+      somaRpk += r.total_rpk || 0;
+      somaAsk += r.total_ask || 0;
+    });
+    var loadFactor = somaAsk > 0 ? somaRpk / somaAsk : NaN;
+
+    var classe = null;
+    if (ano === 2020) classe = "is-crash";
+    else if (ano >= 2021) classe = "is-recovery";
+
+    flipUpdate(document.getElementById("kpi-passageiros"), fmtInt(totalPax), classe);
+    flipUpdate(document.getElementById("kpi-decolagens"), fmtInt(totalDecolagens), classe);
+    flipUpdate(document.getElementById("kpi-loadfactor"), fmtPct(loadFactor), classe);
+    flipUpdate(document.getElementById("kpi-rotas"), fmtInt(rotasAno.length), classe);
+  }
+
+  function irParaAno(ano) {
+    ano = Math.max(state.anos[0], Math.min(state.anos[state.anos.length - 1], ano));
+    state.ano = ano;
+
+    var display = document.getElementById("year-display");
+    flipUpdate(display, String(ano));
+    if (ano === 2020) display.style.color = "var(--rust)";
+    else display.style.color = "var(--amber)";
+
+    document.getElementById("year-slider").value = ano;
+    document.getElementById("regiao-ano-label").textContent = ano;
+
+    var rotasAno = renderMapaAno(ano);
+    atualizarKpis(ano, rotasAno);
+    renderChartRegiao(ano);
+  }
+
+  function initControleAno() {
+    var slider = document.getElementById("year-slider");
+    slider.min = state.anos[0];
+    slider.max = state.anos[state.anos.length - 1];
+    slider.value = 2019;
+
+    slider.addEventListener("input", function () {
+      irParaAno(parseInt(slider.value, 10));
+    });
+  }
+
+  // ---------- Gráfico de mercado ----------
+
+  var PALETA_EMPRESAS = ["#F2A93B", "#3FA796", "#8FB8DE", "#C9564F", "#9C7BD6", "#E0C46C", "#5B8C7B", "#D98E5B", "#5F6B85"];
+
+  function agregarMercado(modo) {
+    var chave = function (r) { return modo === "mes" ? (r.ano + "-" + String(r.mes).padStart(2, "0")) : String(r.ano); };
+
+    var totaisPorEmpresa = {};
+    state.mercado.forEach(function (r) {
+      var e = r.empresa_sigla || "N/D";
+      totaisPorEmpresa[e] = (totaisPorEmpresa[e] || 0) + (r.total_passageiros_pagos || 0);
+    });
+    var topEmpresas = Object.keys(totaisPorEmpresa)
+      .sort(function (a, b) { return totaisPorEmpresa[b] - totaisPorEmpresa[a]; })
+      .slice(0, 8);
+    var topSet = {};
+    topEmpresas.forEach(function (e) { topSet[e] = true; });
+
+    var periodos = [];
+    var periodosSet = {};
+    var matriz = {}; // periodo -> empresa -> total
+
+    state.mercado.forEach(function (r) {
+      var p = chave(r);
+      if (!periodosSet[p]) { periodosSet[p] = true; periodos.push(p); }
+      var empresa = topSet[r.empresa_sigla] ? r.empresa_sigla : "Outras";
+      matriz[p] = matriz[p] || {};
+      matriz[p][empresa] = (matriz[p][empresa] || 0) + (r.total_passageiros_pagos || 0);
+    });
+
+    periodos.sort();
+
+    var series = topEmpresas.concat(["Outras"]);
+    var datasets = series.map(function (empresa, i) {
+      return {
+        label: empresa,
+        data: periodos.map(function (p) {
+          var totalPeriodo = Object.values(matriz[p] || {}).reduce(function (a, b) { return a + b; }, 0);
+          var valor = (matriz[p] && matriz[p][empresa]) || 0;
+          return totalPeriodo > 0 ? (valor / totalPeriodo) * 100 : 0;
+        }),
+        backgroundColor: PALETA_EMPRESAS[i % PALETA_EMPRESAS.length],
+        borderWidth: 0,
+        stack: "market"
+      };
+    });
+
+    return { periodos: periodos, datasets: datasets };
+  }
+
+  function renderChartMercado() {
+    var dados = agregarMercado(state.granularidadeMercado);
+    var ctx = document.getElementById("chart-mercado").getContext("2d");
+
+    if (state.chartMercado) state.chartMercado.destroy();
+
+    state.chartMercado = new Chart(ctx, {
+      type: "bar",
+      data: { labels: dados.periodos, datasets: dados.datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        scales: {
+          x: { stacked: true, ticks: { color: "#838EA3", font: { family: "IBM Plex Mono", size: 10 }, maxRotation: 0, autoSkip: true }, grid: { color: "#1B212E" } },
+          y: { stacked: true, min: 0, max: 100, ticks: { color: "#838EA3", callback: function (v) { return v + "%"; } }, grid: { color: "#1B212E" } }
+        },
+        plugins: {
+          legend: { position: "bottom", labels: { color: "#B7BECC", font: { family: "IBM Plex Sans", size: 11 }, boxWidth: 12 } },
+          tooltip: {
+            backgroundColor: "#171C28",
+            titleFont: { family: "IBM Plex Mono" },
+            bodyFont: { family: "IBM Plex Sans" },
+            callbacks: { label: function (ctx) { return ctx.dataset.label + ": " + ctx.parsed.y.toFixed(1) + "%"; } }
+          }
+        }
+      }
+    });
+  }
+
+  // ---------- Gráfico regional ----------
+
+  function renderChartRegiao(ano) {
+    var totais = {};
+    REGIAO_ORDEM.forEach(function (r) { totais[r] = 0; });
+
+    state.regional
+      .filter(function (r) { return r.ano === ano && r.aeroporto_origem_regiao; })
+      .forEach(function (r) {
+        var reg = r.aeroporto_origem_regiao;
+        totais[reg] = (totais[reg] || 0) + (r.total_passageiros || 0);
+      });
+
+    var labels = REGIAO_ORDEM.filter(function (r) { return totais[r] !== undefined; });
+    var valores = labels.map(function (r) { return totais[r]; });
+
+    var ctx = document.getElementById("chart-regiao").getContext("2d");
+    if (state.chartRegiao) state.chartRegiao.destroy();
+
+    state.chartRegiao = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Passageiros embarcados",
+          data: valores,
+          backgroundColor: "#F2A93B",
+          borderRadius: 2,
+          maxBarThickness: 64
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#171C28",
+            titleFont: { family: "IBM Plex Mono" },
+            bodyFont: { family: "IBM Plex Sans" },
+            callbacks: { label: function (ctx) { return fmtInt(ctx.parsed.y) + " passageiros"; } }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#B7BECC", font: { family: "IBM Plex Mono", size: 11 } }, grid: { display: false } },
+          y: { ticks: { color: "#838EA3", callback: function (v) { return fmtInt(v); } }, grid: { color: "#1B212E" } }
+        }
+      }
+    });
+  }
+
+  function initToggleGranularidade() {
+    var botoes = document.querySelectorAll("#toggle-granularidade button");
+    botoes.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        botoes.forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        state.granularidadeMercado = btn.dataset.modo;
+        renderChartMercado();
+      });
+    });
+  }
+
+  // ---------- Inicialização ----------
+
+  carregarDados().then(function () {
+    initTabs();
+    initMapa();
+    initControleAno();
+    initToggleGranularidade();
+    irParaAno(2019);
+    renderChartMercado();
+  }).catch(function (erro) {
+    document.querySelector("main").innerHTML =
+      '<p style="color:#C9564F;font-family:var(--mono)">Não foi possível carregar os dados (' + erro + '). ' +
+      'Confirme que os arquivos data/rotas_mensal.json, data/mercado_mensal.json e data/regional_mensal.json ' +
+      'estão na mesma pasta que este HTML.</p>';
+  });
+
+})();
+</script>
+
+</body>
+</html>
