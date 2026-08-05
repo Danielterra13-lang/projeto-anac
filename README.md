@@ -4,9 +4,11 @@ Pipeline de dados completo sobre o transporte aéreo brasileiro, cobrindo 2000 a
 
 **Dashboard ao vivo:** https://danielterra13-lang.github.io/projeto-anac/
 
-📌 *Imagem: screenshot do dashboard, aba Malha e Rotas*
+<img width="1882" height="900" alt="image" src="https://github.com/user-attachments/assets/e00924f1-231c-450b-88e8-bf09d1ff41bd" />
 
-📌 *Imagem: screenshot do dashboard, aba Mercado e Regiões*
+
+<img width="1882" height="900" alt="image" src="https://github.com/user-attachments/assets/73ce4c70-20de-4858-a782-adb57080b898" />
+
 
 ## O problema
 
