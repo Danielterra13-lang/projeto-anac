@@ -1,0 +1,39 @@
+name: Exportar dados ANAC
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 20 * *'
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Autenticar no Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Rodar script de exportacao
+        run: python exportar_dados.py
+
+      - name: Commitar dados atualizados
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "Atualiza dados exportados da ANAC (automatico)"
+          git push
